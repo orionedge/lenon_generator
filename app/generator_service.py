@@ -18,7 +18,7 @@ import base64
 from io import BytesIO
 import numpy as np
 load_dotenv()
-client = OpenAI()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 import time
 import os
