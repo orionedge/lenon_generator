@@ -24,4 +24,4 @@ services:
 
 networks:
   lenon:
-    external: true
+    driver: bridge
