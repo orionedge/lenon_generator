@@ -18,7 +18,7 @@ sqlalchemy = "^1.4.53"
 python-dotenv = "^1.0.1"
 openai = "^1.38.0"
 pillow = "^10.4.0"
-paddleocr = "^2.8.1"
+# paddleocr = "^2.8.1"  # Temporarily disabled due to segfault issues
 numpy = "^1.26.4"
 requests = "^2.32.3"
 langchain = "^0.2.12"
@@ -28,7 +28,7 @@ langchain-openai = "^0.1.20"
 langchain-text-splitters = "^0.2.2"
 qdrant-client = "^1.10.1"
 pymysql = "^1.0.2"
-paddlepaddle = "2.5.2"
+# paddlepaddle = "2.5.2"  # Temporarily disabled due to segfault issues
 
 
 [tool.poetry.group.dev.dependencies]

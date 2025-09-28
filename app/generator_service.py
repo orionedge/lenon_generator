@@ -8,7 +8,12 @@ from openai import OpenAI
 from app.system_prompts import format_answers
 from app.system_prompts import format_answers_to_questions
 from PIL import Image
-from paddleocr import PaddleOCR
+try:
+    from paddleocr import PaddleOCR
+    PADDLEOCR_AVAILABLE = True
+except ImportError:
+    PADDLEOCR_AVAILABLE = False
+    print("Warning: PaddleOCR not available, OCR functionality will be disabled")
 import base64
 from io import BytesIO
 import numpy as np
@@ -189,6 +194,10 @@ class GeneratorService:
                 await self._process_answers(input_data)
         print("Generated for Image")
     async def _extract_text(self,data):
+        if not PADDLEOCR_AVAILABLE:
+            print("PaddleOCR not available, skipping OCR extraction")
+            return ""
+        
         try:
             # Initialize PaddleOCR with CPU-only mode to prevent segfaults
             ocr = PaddleOCR(lang='en', use_angle_cls=True, use_gpu=False, show_log=False)

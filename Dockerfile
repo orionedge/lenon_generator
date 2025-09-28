@@ -12,24 +12,6 @@ RUN apt-get update && apt-get install -y \
     libgl1 \
     libx11-6 \
     libxrender1 \
-    libgthread-2.0-0 \
-    libgstreamer1.0-0 \
-    libgstreamer-plugins-base1.0-0 \
-    libgtk-3-0 \
-    libavcodec58 \
-    libavformat58 \
-    libavutil56 \
-    libswscale5 \
-    libswresample3 \
-    libx264-164 \
-    libx265-199 \
-    libvpx7 \
-    libmp3lame0 \
-    libopus0 \
-    libtheora0 \
-    libvorbis0a \
-    libvorbisenc2 \
-    libxvidcore4 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install poetry==1.6.1
