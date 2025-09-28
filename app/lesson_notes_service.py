@@ -8,7 +8,12 @@ import json
 import os
 load_dotenv()
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+def get_openai_client():
+    """Get OpenAI client with proper API key handling"""
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY environment variable is required")
+    return OpenAI(api_key=api_key)
 
 import requests
 
@@ -26,6 +31,7 @@ class LessonNotesService:
         
     async def generate_notes(self,prompt):
         try:
+            client = get_openai_client()
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[

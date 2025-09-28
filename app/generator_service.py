@@ -19,7 +19,13 @@ from io import BytesIO
 import numpy as np
 load_dotenv()
 import os
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+def get_openai_client():
+    """Get OpenAI client with proper API key handling"""
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY environment variable is required")
+    return OpenAI(api_key=api_key)
 
 import time
 import json
@@ -49,6 +55,7 @@ class GeneratorService:
                 ]
             if(old_q):
                 messages.append({"role":"user","content":f"These are previously generated questions, duplicate questions are not allowed:\n{old_q}"}, )
+            client = get_openai_client()
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
@@ -79,6 +86,7 @@ class GeneratorService:
     async def assistant_generate_questions(self,prompt):
         try:
             print(f"---------------------{self.total_pending} Questions Left--------------")
+            client = get_openai_client()
             client.beta.threads.messages.create(
                 self.thread_id,
                 role="user",
@@ -147,6 +155,7 @@ class GeneratorService:
             ]}
         ]
         print("Processing Request")
+        client = get_openai_client()
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=messages,
@@ -178,6 +187,7 @@ class GeneratorService:
                 }
             ]}
         ]
+        client = get_openai_client()
         response = client.chat.completions.create(
             model="gpt-4o-2024-08-06",
             messages=messages,
@@ -222,6 +232,7 @@ class GeneratorService:
                      {"role":"system","content":prompt},
                      {"role":"user","content":f"QUESTIONS\n{questions}\n\nANSWERS\n{answers}\n\nTOTAL QUESTIONS\n{total}"}
                 ]
+            client = get_openai_client()
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
