@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  lenon_generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lenon_generator
+    container_name: lenon_generator
+    restart: unless-stopped
+    working_dir: /code
+    volumes:
+      - ./:/code
+    networks:
+      - lenon
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DB_CONNECTION=${DB_CONNECTION}
+      - QDRANT_HOST_STRING=${QDRANT_HOST_STRING}
+      - LENON_API=${LENON_API}
+    ports:
+      - "8080:8080"
+
+networks:
+  lenon:
+    external: true

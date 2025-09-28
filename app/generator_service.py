@@ -20,12 +20,7 @@ import numpy as np
 load_dotenv()
 import os
 
-def get_openai_client():
-    """Get OpenAI client with proper API key handling"""
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY environment variable is required")
-    return OpenAI(api_key=api_key)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 import time
 import json
@@ -33,7 +28,6 @@ import requests
 
 engine = create_engine(os.getenv("DB_CONNECTION"))
 Session = sessionmaker(bind=engine)
-session = Session()
 
 class GeneratorService:
     def __init__(self, _thread_id,_assistant,_school_id,_user_id,_total,_prompt,_system_prompt,_tools,_tool_name):
@@ -55,7 +49,6 @@ class GeneratorService:
                 ]
             if(old_q):
                 messages.append({"role":"user","content":f"These are previously generated questions, duplicate questions are not allowed:\n{old_q}"}, )
-            client = get_openai_client()
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
@@ -86,7 +79,6 @@ class GeneratorService:
     async def assistant_generate_questions(self,prompt):
         try:
             print(f"---------------------{self.total_pending} Questions Left--------------")
-            client = get_openai_client()
             client.beta.threads.messages.create(
                 self.thread_id,
                 role="user",
@@ -232,7 +224,6 @@ class GeneratorService:
                      {"role":"system","content":prompt},
                      {"role":"user","content":f"QUESTIONS\n{questions}\n\nANSWERS\n{answers}\n\nTOTAL QUESTIONS\n{total}"}
                 ]
-            client = get_openai_client()
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
@@ -268,6 +259,7 @@ class GeneratorService:
                     return False
     async def _process_parsed_data(self,questionsToSave)->list:
         try:
+            session = Session()
             session.begin()
             row = session.execute(text(f"SELECT * FROM user_threads WHERE id = {self.thread_id} LIMIT 1")).fetchone()
             thread = row._asdict()
@@ -290,6 +282,7 @@ class GeneratorService:
              session.close()
     async def _process_data(self,data)->list:
         try:
+            session = Session()
             session.begin()
             row = session.execute(text(f"SELECT * FROM user_threads WHERE id = {self.thread_id} LIMIT 1")).fetchone()
             thread = row._asdict()
@@ -324,6 +317,7 @@ class GeneratorService:
     
     async def _process_answers(self,data):
         try:
+            session = Session()
             session.begin()
             stmt = text("""
     INSERT INTO answers (marker_id, student_id, school_id,original_answer_sheet_path, choices,created_at,updated_at) 
@@ -350,6 +344,7 @@ class GeneratorService:
             input_credits = usage.prompt_tokens
             output_credits = usage.completion_tokens
             try:
+                session = Session()
                 session.begin()
                 session.execute(text(f"UPDATE generator_credits SET input_credits = input_credits - {input_credits}, output_credits = output_credits - {output_credits} WHERE school_id = {self.school_id}"))
                 if self.user_id:

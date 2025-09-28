@@ -8,19 +8,12 @@ import json
 import os
 load_dotenv()
 
-def get_openai_client():
-    """Get OpenAI client with proper API key handling"""
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise ValueError("OPENAI_API_KEY environment variable is required")
-    return OpenAI(api_key=api_key)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 import requests
 
-
 engine = create_engine(os.getenv("DB_CONNECTION"))
 Session = sessionmaker(bind=engine)
-session = Session()
 
 class LessonNotesService:
     def __init__(self,_school_id,_user_id,_lesson_id,_prompt):
@@ -31,7 +24,6 @@ class LessonNotesService:
         
     async def generate_notes(self,prompt):
         try:
-            client = get_openai_client()
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
@@ -59,6 +51,7 @@ class LessonNotesService:
                     await self.notify_web_app("failed")
     async def _process_data(self,data):
         try:
+            session = Session()
             session.begin()
             stmt = text(f"UPDATE lesson_notes SET content = :x WHERE id = {self.lesson_id}")
             stmt = stmt.bindparams(x=json.dumps(data))
@@ -78,6 +71,7 @@ class LessonNotesService:
             input_credits = usage.prompt_tokens
             output_credits = usage.completion_tokens
             try:
+                session = Session()
                 session.begin()
                 session.execute(text(f"UPDATE generator_credits SET input_credits = input_credits - {input_credits}, output_credits = output_credits - {output_credits} WHERE school_id = {self.school_id}"))
                 if self.user_id:
