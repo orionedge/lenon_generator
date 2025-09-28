@@ -189,15 +189,22 @@ class GeneratorService:
                 await self._process_answers(input_data)
         print("Generated for Image")
     async def _extract_text(self,data):
-        ocr = PaddleOCR(lang='en',use_angle_cls=True,use_gpu=True)
-        data = data.split(',')[1]
-        decoded_bytes = base64.b64decode(data)
-        result = ocr.ocr(decoded_bytes,cls=True)
-        inner_result = result[0]
-        data = ""
-        for res in inner_result:
-            data += "\n"+res[1][0]
-        return data
+        try:
+            # Initialize PaddleOCR with CPU-only mode to prevent segfaults
+            ocr = PaddleOCR(lang='en', use_angle_cls=True, use_gpu=False, show_log=False)
+            data = data.split(',')[1]
+            decoded_bytes = base64.b64decode(data)
+            result = ocr.ocr(decoded_bytes, cls=True)
+            if result and result[0]:
+                inner_result = result[0]
+                data = ""
+                for res in inner_result:
+                    if res and len(res) > 1 and res[1]:
+                        data += "\n"+res[1][0]
+            return data
+        except Exception as e:
+            print(f"OCR extraction failed: {e}")
+            return ""
     
     async def parse_questions(self,prompt,questions,answers,total):
         print(f"---------------------Parsing Questions--------------")
