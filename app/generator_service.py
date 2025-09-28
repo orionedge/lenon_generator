@@ -18,10 +18,10 @@ import base64
 from io import BytesIO
 import numpy as np
 load_dotenv()
+import os
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 import time
-import os
 import json
 import requests
 

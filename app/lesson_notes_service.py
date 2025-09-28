@@ -5,12 +5,11 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from app.system_prompts import format_lesson_notes,lesson_notes_keys,lesson_notes_titles
 import json
-
+import os
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-import os
 import requests
 
 
