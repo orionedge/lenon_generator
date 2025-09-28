@@ -5,8 +5,8 @@ from sqlalchemy import create_engine, Column, Integer, String, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 from openai import OpenAI
-from system_prompts import format_answers
-from system_prompts import format_answers_to_questions
+from app.system_prompts import format_answers
+from app.system_prompts import format_answers_to_questions
 from PIL import Image
 from paddleocr import PaddleOCR
 import base64

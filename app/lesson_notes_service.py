@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from openai import OpenAI
-from system_prompts import format_lesson_notes,lesson_notes_keys,lesson_notes_titles
+from app.system_prompts import format_lesson_notes,lesson_notes_keys,lesson_notes_titles
 import json
 
 load_dotenv()

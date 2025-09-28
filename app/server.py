@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Request,HTTPException,BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from generator_service import GeneratorService
-from lesson_notes_service import LessonNotesService
-from uploader_service import UploaderService
-from answer_parser_service import AnswerParserService
+from app.generator_service import GeneratorService
+from app.lesson_notes_service import LessonNotesService
+from app.uploader_service import UploaderService
+from app.answer_parser_service import AnswerParserService
 from fastapi.responses import JSONResponse
-from system_prompts import questions_prompt,answers,lesson_notes_general,lesson_notes,format_mc_parsed_questions,format_mc_questions,format_wr_questions,general_knowledge_mc,general_knowledge_written,mc,written
+from app.system_prompts import questions_prompt,answers,lesson_notes_general,lesson_notes,format_mc_parsed_questions,format_mc_questions,format_wr_questions,general_knowledge_mc,general_knowledge_written,mc,written
 import asyncio
 app = FastAPI()
 

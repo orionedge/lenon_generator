@@ -1,5 +1,19 @@
 FROM python:3.11-slim
 
+# Install system dependencies required for PaddlePaddle and OpenCV
+RUN apt-get update && apt-get install -y \
+    libgomp1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgcc-s1 \
+    libgfortran5 \
+    libgl1 \
+    libx11-6 \
+    libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN pip install poetry==1.6.1
 
 RUN poetry config virtualenvs.create false
